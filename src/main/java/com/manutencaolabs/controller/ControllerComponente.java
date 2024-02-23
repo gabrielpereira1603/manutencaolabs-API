@@ -18,7 +18,7 @@ import com.manutencaolabs.repository.RepositoryComponente;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("https://manutencaolabs-api.onrender.com/componentes")
+@RequestMapping("/componentes")
 public class ControllerComponente {
     @Autowired
     private RepositoryComponente repositoryComponente;
