@@ -31,7 +31,7 @@ public class ControllerComponente {
 	}
 
     @GetMapping("/{id}")
-	public Componente retornaCidadeId(@PathVariable Long id) {
+	public Componente retornaComponenteId(@PathVariable Long id) {
 		Componente componente = repositoryComponente.getOne(id);
 		return componente;
 	}

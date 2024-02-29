@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Dados via JavaScript</title>
+</head>
+<body>
+
+<form id="myForm">
+    <label for="patrimonio">Patrimônio:</label><br>
+    <input type="text" id="patrimonio" name="patrimonio" value="02"><br>
+    
+    <label for="numerolaboratorio">Número Laboratório:</label><br>
+    <input type="text" id="numerolaboratorio" name="numerolaboratorio" value="Laboratório 1"><br>
+
+    <label for="tiposituacao">Tipo Situação:</label><br>
+    <input type="text" id="tiposituacao" name="tiposituacao" value="Manutenção"><br><br>
+
+    <input type="submit" value="Enviar">
+
+
+    <h1>Consulta de Computadores</h1>
+
+<div id="computadores"></div>
+
+<button onclick="consultarComputadores()">Consultar Computadores</button>
+
+</form>
+
+<script>
+    document.getElementById('myForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Evita que o formulário seja enviado da maneira padrão
+
+        // Coleta os dados dos campos do formulário e os transforma em um objeto JSON
+        var formDataObject = {
+            patrimonio: document.getElementById('patrimonio').value,
+            numerolaboratorio: document.getElementById('numerolaboratorio').value,
+            tiposituacao: document.getElementById('tiposituacao').value
+        };
+        console.log(formDataObject)
+
+        // Transforma o objeto JSON em uma string JSON
+        var jsonData = JSON.stringify(formDataObject);
+        console.log(jsonData)
+        // Cria um novo objeto FormData
+        var formData = new FormData();
+        console.log(formData)
+        // Adiciona a string JSON ao FormData
+        formData.append('data', jsonData);
+
+        console.log(formData)
+
+        var url = 'http://localhost:8080/computadores/add'; // URL para enviar os dados
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' // Define o tipo de conteúdo como JSON
+            },
+            body: jsonData // Aqui, você pode enviar diretamente a string JSON
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao enviar os dados');
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log(data); // Exibe a resposta do servidor no console
+            alert('Dados enviados com sucesso!'); // Exibe um alerta para o usuário
+        })
+        .catch(error => {
+            console.error('Erro:', error); // Exibe erros no console
+            alert('Erro ao enviar os dados. Por favor, tente novamente.'); // Exibe um alerta de erro para o usuário
+        });
+    });
+
+    function consultarComputadores() {
+        fetch('http://localhost:8080/computadores')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao consultar computadores');
+                }
+                return response.json();
+            })
+            .then(data => {
+                exibirComputadores(data);
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao consultar computadores. Por favor, tente novamente.');
+            });
+            
+    }
+
+    function exibirComputadores(computadores) {
+        const computadoresDiv = document.getElementById('computadores');
+        computadoresDiv.innerHTML = ''; // Limpa o conteúdo atual
+
+        computadores.forEach(computador => {
+            const computadorDiv = document.createElement('div');
+            computadorDiv.textContent = `ID: ${computador.codcomputador}, Patrimônio: ${computador.patrimonio}, Laboratório: ${computador.laboratorio.numerolaboratorio}, Situação: ${computador.situacao.tiposituacao}`;
+            computadoresDiv.appendChild(computadorDiv);
+        });
+    }
+</script>
+
+</body>
+</html>
